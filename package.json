@@ -2,7 +2,7 @@
   "name": "sendtmux",
   "displayName": "SendTmux",
   "description": "Send selected text or current line from VS Code to Tmux panes",
-  "version": "0.0.3",
+  "version": "0.0.4",
   "icon": "log.png",
   "publisher": "finger",
   "repository": {
