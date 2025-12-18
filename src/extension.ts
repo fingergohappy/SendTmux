@@ -250,10 +250,20 @@ async function selectTarget(): Promise<TmuxTarget | null> {
 					placeHolder: 'Select window or skip to use current active window',
 				});
 
-				if (selectedWindow && selectedWindow.window) {
-					target.window = selectedWindow.window.index;
+				if (selectedWindow) {
+					if (selectedWindow.window) {
+						// User selected a specific window
+						target.window = selectedWindow.window.index;
+					} else {
+						// User selected "Skip" - get current active window
+						const activeWindow = await tmuxService.getActiveWindow(target.session);
+						if (activeWindow) {
+							target.window = activeWindow;
+						}
+						// If we can't get active window, target.window remains undefined
+					}
 				}
-				// If user selects skip option or cancels, target.window remains undefined
+				// If user cancels, target.window remains undefined
 			}
 		}
 
@@ -278,10 +288,20 @@ async function selectTarget(): Promise<TmuxTarget | null> {
 					placeHolder: 'Select pane or skip to use current active pane',
 				});
 
-				if (selectedPane && selectedPane.pane) {
-					target.pane = selectedPane.pane.index;
+				if (selectedPane) {
+					if (selectedPane.pane) {
+						// User selected a specific pane
+						target.pane = selectedPane.pane.index;
+					} else {
+						// User selected "Skip" - get current active pane
+						const activePane = await tmuxService.getActivePane(target.session, target.window);
+						if (activePane) {
+							target.pane = activePane;
+						}
+						// If we can't get active pane, target.pane remains undefined
+					}
 				}
-				// If user selects skip option or cancels, target.pane remains undefined
+				// If user cancels, target.pane remains undefined
 			}
 		}
 

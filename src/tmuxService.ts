@@ -163,4 +163,29 @@ export class TmuxService {
             return null;
         }
     }
+
+    /**
+     * Get current active window index in a session
+     */
+    async getActiveWindow(session: string): Promise<string | null> {
+        try {
+            const { stdout } = await execAsync(`tmux display-message -t "${session}" -p "#{window_index}"`);
+            return stdout.trim();
+        } catch {
+            return null;
+        }
+    }
+
+    /**
+     * Get current active pane index in a window
+     */
+    async getActivePane(session: string, window?: string): Promise<string | null> {
+        try {
+            const target = window ? `${session}:${window}` : session;
+            const { stdout } = await execAsync(`tmux display-message -t "${target}" -p "#{pane_index}"`);
+            return stdout.trim();
+        } catch {
+            return null;
+        }
+    }
 }
