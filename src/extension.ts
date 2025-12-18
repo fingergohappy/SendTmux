@@ -179,7 +179,7 @@ async function selectTarget(): Promise<TmuxTarget | null> {
 
 		// Add recent targets
 		if (recentTargets.length > 0) {
-			items.push({ label: '$(clock) Recent Targets', kind: vscode.QuickPickItemKind.Separator });
+			items.push({ label: 'Recent Targets', kind: vscode.QuickPickItemKind.Separator });
 			for (const target of recentTargets) {
 				items.push({
 					label: configManager.formatTarget(target),
@@ -191,7 +191,7 @@ async function selectTarget(): Promise<TmuxTarget | null> {
 
 		// Add available sessions
 		if (sessions.length > 0) {
-			items.push({ label: '$(terminal) Available Sessions', kind: vscode.QuickPickItemKind.Separator });
+			items.push({ label: 'Available Sessions', kind: vscode.QuickPickItemKind.Separator });
 			for (const session of sessions) {
 				items.push({
 					label: session.name,
@@ -202,7 +202,7 @@ async function selectTarget(): Promise<TmuxTarget | null> {
 		}
 
 		// Add custom input option
-		items.push({ label: '$(edit) Custom Target...', isCustom: true });
+		items.push({ label: 'Custom Target...', isCustom: true });
 
 		// Show quick pick
 		const selected = await vscode.window.showQuickPick(items, {
@@ -241,7 +241,7 @@ async function selectTarget(): Promise<TmuxTarget | null> {
 
 				// Add skip option
 				windowItems.unshift({
-					label: '$(chevron-right) Skip (use current active window)',
+					label: 'Skip (use current active window)',
 					description: 'Send to the currently active window in this session',
 					window: null as any,
 				});
@@ -279,7 +279,7 @@ async function selectTarget(): Promise<TmuxTarget | null> {
 
 				// Add skip option
 				paneItems.unshift({
-					label: '$(chevron-right) Skip (use current active pane)',
+					label: 'Skip (use current active pane)',
 					description: 'Send to the currently active pane in this window',
 					pane: null as any,
 				});
