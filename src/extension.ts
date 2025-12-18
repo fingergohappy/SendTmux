@@ -149,7 +149,7 @@ async function getTargetForSending(forceConfirm: boolean): Promise<TmuxTarget | 
  * Interactive target selection
  * After selecting a session, user is directly presented with window selection,
  * then pane selection (if window was selected).
- * Each step has a "Skip" option to use default window/pane.
+ * Each step has a "Skip" option to use current active window/pane.
  */
 async function selectTarget(): Promise<TmuxTarget | null> {
 	try {
@@ -235,13 +235,13 @@ async function selectTarget(): Promise<TmuxTarget | null> {
 
 				// Add skip option
 				windowItems.unshift({
-					label: '$(arrow-right) Skip (use default window)',
-					description: 'Continue without selecting specific window',
+					label: '$(arrow-right) Skip (use current active window)',
+					description: 'Send to the currently active window in this session',
 					window: null as any,
 				});
 
 				const selectedWindow = await vscode.window.showQuickPick(windowItems, {
-					placeHolder: 'Select window or skip to use default',
+					placeHolder: 'Select window or skip to use current active window',
 				});
 
 				if (selectedWindow && selectedWindow.window) {
@@ -263,13 +263,13 @@ async function selectTarget(): Promise<TmuxTarget | null> {
 
 				// Add skip option
 				paneItems.unshift({
-					label: '$(arrow-right) Skip (use default pane)',
-					description: 'Continue without selecting specific pane',
+					label: '$(arrow-right) Skip (use current active pane)',
+					description: 'Send to the currently active pane in this window',
 					pane: null as any,
 				});
 
 				const selectedPane = await vscode.window.showQuickPick(paneItems, {
-					placeHolder: 'Select pane or skip to use default',
+					placeHolder: 'Select pane or skip to use current active pane',
 				});
 
 				if (selectedPane && selectedPane.pane) {
