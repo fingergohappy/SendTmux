@@ -147,6 +147,9 @@ async function getTargetForSending(forceConfirm: boolean): Promise<TmuxTarget | 
 
 /**
  * Interactive target selection
+ * After selecting a session, user is directly presented with window selection,
+ * then pane selection (if window was selected).
+ * Each step has a "Skip" option to use default window/pane.
  */
 async function selectTarget(): Promise<TmuxTarget | null> {
 	try {
@@ -220,53 +223,59 @@ async function selectTarget(): Promise<TmuxTarget | null> {
 
 		let target = selected.target!;
 
-		// If only session is selected, let user optionally select window and pane
+		// If only session is selected, directly show window selection
 		if (!target.window) {
-			const shouldSelectWindow = await vscode.window.showQuickPick(['Yes', 'No'], {
-				placeHolder: 'Select specific window?',
-			});
+			const windows = await tmuxService.listWindows(target.session);
+			if (windows.length > 0) {
+				const windowItems = windows.map(w => ({
+					label: `${w.index}: ${w.name}`,
+					description: 'Window',
+					window: w,
+				}));
 
-			if (shouldSelectWindow === 'Yes') {
-				const windows = await tmuxService.listWindows(target.session);
-				if (windows.length > 0) {
-					const windowItems = windows.map(w => ({
-						label: `${w.index}: ${w.name}`,
-						window: w,
-					}));
+				// Add skip option
+				windowItems.unshift({
+					label: '$(arrow-right) Skip (use default window)',
+					description: 'Continue without selecting specific window',
+					window: null as any,
+				});
 
-					const selectedWindow = await vscode.window.showQuickPick(windowItems, {
-						placeHolder: 'Select window',
-					});
+				const selectedWindow = await vscode.window.showQuickPick(windowItems, {
+					placeHolder: 'Select window or skip to use default',
+				});
 
-					if (selectedWindow) {
-						target.window = selectedWindow.window.index;
-					}
+				if (selectedWindow && selectedWindow.window) {
+					target.window = selectedWindow.window.index;
 				}
+				// If user selects skip option or cancels, target.window remains undefined
 			}
 		}
 
-		// If window is selected, let user optionally select pane
+		// If window is selected, directly show pane selection
 		if (target.window && !target.pane) {
-			const shouldSelectPane = await vscode.window.showQuickPick(['Yes', 'No'], {
-				placeHolder: 'Select specific pane?',
-			});
+			const panes = await tmuxService.listPanes(target.session, target.window);
+			if (panes.length > 0) {
+				const paneItems = panes.map(p => ({
+					label: `Pane ${p.index} (${p.id})`,
+					description: 'Pane',
+					pane: p,
+				}));
 
-			if (shouldSelectPane === 'Yes') {
-				const panes = await tmuxService.listPanes(target.session, target.window);
-				if (panes.length > 0) {
-					const paneItems = panes.map(p => ({
-						label: `Pane ${p.index} (${p.id})`,
-						pane: p,
-					}));
+				// Add skip option
+				paneItems.unshift({
+					label: '$(arrow-right) Skip (use default pane)',
+					description: 'Continue without selecting specific pane',
+					pane: null as any,
+				});
 
-					const selectedPane = await vscode.window.showQuickPick(paneItems, {
-						placeHolder: 'Select pane',
-					});
+				const selectedPane = await vscode.window.showQuickPick(paneItems, {
+					placeHolder: 'Select pane or skip to use default',
+				});
 
-					if (selectedPane) {
-						target.pane = selectedPane.pane.index;
-					}
+				if (selectedPane && selectedPane.pane) {
+					target.pane = selectedPane.pane.index;
 				}
+				// If user selects skip option or cancels, target.pane remains undefined
 			}
 		}
 
