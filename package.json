@@ -4,13 +4,13 @@
   "description": "Send selected text from VS Code to Tmux panes",
   "version": "0.0.1",
   "icon": "log.png",
-  "publisher": "your-publisher-name",
+  "publisher": "finger",
   "repository": {
     "type": "git",
-    "url": "https://github.com/your-username/sendtmux"
+    "url": "https://github.com/fingergohappy/SendTmux"
   },
   "engines": {
-    "vscode": "^1.107.0"
+    "vscode": "^1.105.0"
   },
   "categories": [
     "Other"
@@ -91,7 +91,7 @@
     "test": "vscode-test"
   },
   "devDependencies": {
-    "@types/vscode": "^1.107.0",
+    "@types/vscode": "^1.105.0",
     "@types/mocha": "^10.0.10",
     "@types/node": "22.x",
     "typescript-eslint": "^8.48.1",
