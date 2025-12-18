@@ -42,6 +42,12 @@ export function activate(context: vscode.ExtensionContext) {
             await clearHistory(configManager);
         })
     );
+
+    context.subscriptions.push(
+        vscode.commands.registerCommand('sendtmux.showOutput', () => {
+            tmuxService.showOutput();
+        })
+    );
 }
 
 /**

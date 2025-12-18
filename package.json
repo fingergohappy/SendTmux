@@ -34,6 +34,10 @@
       {
         "command": "sendtmux.clearHistory",
         "title": "SendTmux: Clear Recent Targets History"
+      },
+      {
+        "command": "sendtmux.showOutput",
+        "title": "SendTmux: Show Output"
       }
     ],
     "keybindings": [

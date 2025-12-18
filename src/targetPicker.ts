@@ -31,6 +31,7 @@ export async function selectTarget(
             const items: SelectionItem[] = [];
             const trimmed = input.trim();
 
+            // 1. Handle empty input: Show recent and available sessions
             if (!trimmed) {
                 if (recentTargets.length > 0) {
                     items.push({ 
@@ -73,10 +74,13 @@ export async function selectTarget(
                 return;
             }
 
+            // 2. Parse input and show filtered results
+            // Format: session:window.pane
             const colonIndex = trimmed.indexOf(':');
             const dotIndex = trimmed.indexOf('.');
 
             if (colonIndex === -1) {
+                // Phase 1: Selecting or searching for a session
                 const filteredSessions = allSessions.filter(s => 
                     s.name.toLowerCase().includes(trimmed.toLowerCase())
                 );
@@ -101,10 +105,12 @@ export async function selectTarget(
                     });
                 }
             } else {
+                // Phase 2 or 3: Session specified, selecting window or pane
                 const session = trimmed.substring(0, colonIndex);
                 const rest = trimmed.substring(colonIndex + 1);
 
                 if (dotIndex === -1 || dotIndex < colonIndex) {
+                    // Phase 2: Selecting a window
                     const windowFilter = rest.toLowerCase();
                     try {
                         const windows = await tmuxService.listWindows(session);
@@ -129,6 +135,7 @@ export async function selectTarget(
                             }
                         });
 
+                        // Fallback: use what the user typed as window name
                         if (windowFilter && !items.some(i => i.type === 'window' && i.kind !== vscode.QuickPickItemKind.Separator)) {
                             items.push({
                                 label: `${session}:${windowFilter}`,
@@ -148,6 +155,7 @@ export async function selectTarget(
                         });
                     }
                 } else {
+                    // Phase 3: Selecting a pane
                     const windowPart = trimmed.substring(colonIndex + 1, dotIndex);
                     const paneFilter = trimmed.substring(dotIndex + 1).toLowerCase();
                     

@@ -1,3 +1,4 @@
+import * as vscode from 'vscode';
 import { exec } from 'child_process';
 import { promisify } from 'util';
 
@@ -24,6 +25,17 @@ export interface TmuxPane {
 }
 
 export class TmuxService {
+    private outputChannel: vscode.OutputChannel;
+
+    constructor() {
+        this.outputChannel = vscode.window.createOutputChannel('SendTmux');
+    }
+
+    private log(message: string) {
+        const timestamp = new Date().toISOString();
+        this.outputChannel.appendLine(`[${timestamp}] ${message}`);
+    }
+
     /**
      * Check if tmux is installed and accessible
      */
@@ -41,6 +53,7 @@ export class TmuxService {
      */
     async listSessions(): Promise<TmuxSession[]> {
         try {
+            this.log('Listing tmux sessions');
             const { stdout } = await execAsync('tmux list-sessions -F "#{session_name}"');
             return stdout
                 .trim()
@@ -48,6 +61,7 @@ export class TmuxService {
                 .filter(name => name)
                 .map(name => ({ name }));
         } catch (error) {
+            this.log(`Error listing sessions: ${error}`);
             return [];
         }
     }
@@ -57,11 +71,13 @@ export class TmuxService {
      */
     async listWindows(session: string): Promise<TmuxWindow[]> {
         try {
+            this.log(`Listing windows for session: ${session}`);
+            const sanitizedSession = this.escapeShellArg(session);
             const { stdout, stderr } = await execAsync(
-                `tmux list-windows -t "${session}" -F "#{window_index}:#{window_name}"`
+                `tmux list-windows -t ${sanitizedSession} -F "#{window_index}:#{window_name}"`
             );
             if (stderr) {
-                console.error(`tmux list-windows stderr for session "${session}":`, stderr);
+                this.log(`tmux list-windows stderr: ${stderr}`);
             }
             const windows = stdout
                 .trim()
@@ -77,7 +93,7 @@ export class TmuxService {
             return windows;
         } catch (error) {
             const errorMessage = error instanceof Error ? error.message : String(error);
-            console.error(`Error listing windows for session "${session}":`, errorMessage);
+            this.log(`Error listing windows: ${errorMessage}`);
             throw new Error(`Failed to list windows for session "${session}": ${errorMessage}`);
         }
     }
@@ -88,8 +104,10 @@ export class TmuxService {
     async listPanes(session: string, window?: string): Promise<TmuxPane[]> {
         try {
             const target = window ? `${session}:${window}` : session;
+            this.log(`Listing panes for target: ${target}`);
+            const sanitizedTarget = this.escapeShellArg(target);
             const { stdout } = await execAsync(
-                `tmux list-panes -t "${target}" -F "#{pane_index}:#{pane_id}"`
+                `tmux list-panes -t ${sanitizedTarget} -F "#{pane_index}:#{pane_id}"`
             );
             return stdout
                 .trim()
@@ -100,6 +118,7 @@ export class TmuxService {
                     return { index, id };
                 });
         } catch (error) {
+            this.log(`Error listing panes: ${error}`);
             return [];
         }
     }
@@ -110,7 +129,9 @@ export class TmuxService {
     async validateTarget(target: TmuxTarget): Promise<boolean> {
         try {
             const targetStr = this.buildTargetString(target);
-            await execAsync(`tmux has-session -t "${targetStr}"`);
+            this.log(`Validating target: ${targetStr}`);
+            const sanitizedTarget = this.escapeShellArg(targetStr);
+            await execAsync(`tmux has-session -t ${sanitizedTarget}`);
             return true;
         } catch {
             return false;
@@ -132,20 +153,29 @@ export class TmuxService {
     }
 
     /**
+     * Escape shell argument to prevent injection
+     */
+    private escapeShellArg(arg: string): string {
+        return `'${arg.replace(/'/g, "'\\''")}'`;
+    }
+
+    /**
      * Send text to tmux target
      */
     async sendText(target: TmuxTarget, text: string, appendNewline: boolean = true): Promise<void> {
         const targetStr = this.buildTargetString(target);
+        this.log(`Sending text to ${targetStr}`);
+        const sanitizedTarget = this.escapeShellArg(targetStr);
 
         // Escape single quotes in the text
         const escapedText = text.replace(/'/g, "'\\''");
 
         // Send the text
-        await execAsync(`tmux send-keys -t "${targetStr}" -l '${escapedText}'`);
+        await execAsync(`tmux send-keys -t ${sanitizedTarget} -l '${escapedText}'`);
 
         // Send Enter key if appendNewline is true
         if (appendNewline) {
-            await execAsync(`tmux send-keys -t "${targetStr}" Enter`);
+            await execAsync(`tmux send-keys -t ${sanitizedTarget} Enter`);
         }
     }
 
@@ -178,7 +208,8 @@ export class TmuxService {
      */
     async getActiveWindow(session: string): Promise<string | null> {
         try {
-            const { stdout } = await execAsync(`tmux display-message -t "${session}" -p "#{window_index}"`);
+            const sanitizedSession = this.escapeShellArg(session);
+            const { stdout } = await execAsync(`tmux display-message -t ${sanitizedSession} -p "#{window_index}"`);
             return stdout.trim();
         } catch {
             return null;
@@ -191,10 +222,15 @@ export class TmuxService {
     async getActivePane(session: string, window?: string): Promise<string | null> {
         try {
             const target = window ? `${session}:${window}` : session;
-            const { stdout } = await execAsync(`tmux display-message -t "${target}" -p "#{pane_index}"`);
+            const sanitizedTarget = this.escapeShellArg(target);
+            const { stdout } = await execAsync(`tmux display-message -t ${sanitizedTarget} -p "#{pane_index}"`);
             return stdout.trim();
         } catch {
             return null;
         }
+    }
+
+    public showOutput() {
+        this.outputChannel.show();
     }
 }
