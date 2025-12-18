@@ -1,0 +1,103 @@
+{
+  "name": "sendtmux",
+  "displayName": "SendTmux",
+  "description": "Send selected text from VS Code to Tmux panes",
+  "version": "0.0.1",
+  "icon": "log.png",
+  "publisher": "your-publisher-name",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/your-username/sendtmux"
+  },
+  "engines": {
+    "vscode": "^1.107.0"
+  },
+  "categories": [
+    "Other"
+  ],
+  "activationEvents": [],
+  "main": "./out/extension.js",
+  "contributes": {
+    "commands": [
+      {
+        "command": "sendtmux.sendSelection",
+        "title": "SendTmux: Send Selection to Tmux"
+      },
+      {
+        "command": "sendtmux.selectTarget",
+        "title": "SendTmux: Select Tmux Target"
+      },
+      {
+        "command": "sendtmux.sendWithConfirmation",
+        "title": "SendTmux: Send Selection with Confirmation"
+      }
+    ],
+    "keybindings": [
+      {
+        "command": "sendtmux.sendSelection",
+        "key": "ctrl+shift+t",
+        "mac": "cmd+shift+t",
+        "when": "editorTextFocus && editorHasSelection"
+      }
+    ],
+    "configuration": {
+      "title": "SendTmux",
+      "properties": {
+        "sendtmux.session": {
+          "type": "string",
+          "default": "",
+          "description": "Default Tmux session name"
+        },
+        "sendtmux.window": {
+          "type": "string",
+          "default": "",
+          "description": "Default Tmux window name or number"
+        },
+        "sendtmux.pane": {
+          "type": "string",
+          "default": "",
+          "description": "Default Tmux pane number"
+        },
+        "sendtmux.sendMode": {
+          "type": "string",
+          "enum": ["line-by-line", "all-at-once"],
+          "default": "all-at-once",
+          "description": "How to send multi-line text"
+        },
+        "sendtmux.confirmBeforeSend": {
+          "type": "boolean",
+          "default": false,
+          "description": "Confirm target before sending"
+        },
+        "sendtmux.rememberTarget": {
+          "type": "boolean",
+          "default": true,
+          "description": "Remember recently used targets"
+        },
+        "sendtmux.appendNewline": {
+          "type": "boolean",
+          "default": true,
+          "description": "Append newline to execute commands automatically"
+        }
+      }
+    }
+  },
+  "scripts": {
+    "vscode:prepublish": "pnpm run compile",
+    "compile": "tsc -p ./",
+    "watch": "tsc -watch -p ./",
+    "pretest": "pnpm run compile && pnpm run lint",
+    "lint": "eslint src",
+    "test": "vscode-test"
+  },
+  "devDependencies": {
+    "@types/vscode": "^1.107.0",
+    "@types/mocha": "^10.0.10",
+    "@types/node": "22.x",
+    "typescript-eslint": "^8.48.1",
+    "eslint": "^9.39.1",
+    "typescript": "^5.9.3",
+    "@vscode/test-cli": "^0.0.12",
+    "@vscode/test-electron": "^2.5.2"
+  }
+}
