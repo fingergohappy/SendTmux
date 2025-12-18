@@ -30,6 +30,10 @@
       {
         "command": "sendtmux.sendWithConfirmation",
         "title": "SendTmux: Send to Tmux with Confirmation"
+      },
+      {
+        "command": "sendtmux.clearHistory",
+        "title": "SendTmux: Clear Recent Targets History"
       }
     ],
     "keybindings": [

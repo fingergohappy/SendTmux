@@ -31,6 +31,12 @@ export function activate(context: vscode.ExtensionContext) {
 			}
 		})
 	);
+
+	context.subscriptions.push(
+		vscode.commands.registerCommand('sendtmux.clearHistory', async () => {
+			await clearHistory();
+		})
+	);
 }
 
 /**
@@ -301,6 +307,32 @@ function parseTargetString(targetStr: string): TmuxTarget {
 		window: windowParts?.[0],
 		pane: windowParts?.[1],
 	};
+}
+
+/**
+ * Clear recent targets history
+ */
+async function clearHistory(): Promise<void> {
+	try {
+		// Ask for confirmation
+		const result = await vscode.window.showWarningMessage(
+			'Are you sure you want to clear all recent targets history?',
+			{ modal: true },
+			'Clear History',
+			'Cancel'
+		);
+
+		if (result !== 'Clear History') {
+			return;
+		}
+
+		await configManager.clearRecentTargets();
+		vscode.window.showInformationMessage('Recent targets history cleared');
+
+	} catch (error) {
+		const errorMessage = error instanceof Error ? error.message : String(error);
+		vscode.window.showErrorMessage(`Failed to clear history: ${errorMessage}`);
+	}
 }
 
 export function deactivate() {}

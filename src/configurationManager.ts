@@ -122,4 +122,14 @@ export class ConfigurationManager {
         }
         return str;
     }
+
+    /**
+     * Clear all recent targets history
+     */
+    async clearRecentTargets(): Promise<void> {
+        await this.context.globalState.update(
+            ConfigurationManager.RECENT_TARGETS_KEY,
+            []
+        );
+    }
 }
