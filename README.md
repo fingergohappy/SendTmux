@@ -4,25 +4,25 @@
   <img src="log.png" alt="SendTmux Logo" width="200"/>
 </p>
 
-一个强大的 VS Code 扩展，让你能够将编辑器中选中的代码或文本直接发送到 Tmux 终端面板中执行。
+A powerful VS Code extension that allows you to send selected code or text directly from the editor to a Tmux terminal pane.
 
-非常适合 REPL 驱动开发、交互式编程、快速测试代码片段等场景。
+Perfect for REPL-driven development, interactive programming, and quickly testing code snippets.
 
-## ✨ 主要特性
+## ✨ Key Features
 
-- 🚀 **快速发送** - 选中代码，一键发送到 Tmux 面板
-- 🎯 **智能目标选择** - 支持选择会话(session)、窗口(window)、面板(pane)
-- 📝 **历史记录** - 自动记住最近使用的目标，快速切换
-- 🔄 **多种发送模式** - 支持整体发送或逐行发送
-- ⚙️ **灵活配置** - 支持全局配置和工作区配置
-- ✅ **自动验证** - 发送前自动验证目标是否存在
-- 🔔 **友好提示** - 详细的错误提示和成功反馈
+- 🚀 **Quick Send** - Select code and send it to a Tmux pane with one click
+- 🎯 **Smart Target Selection** - Support for selecting session, window, and pane
+- 📝 **History** - Automatically remembers recently used targets for quick switching
+- 🔄 **Multiple Send Modes** - Support for sending text all-at-once or line-by-line
+- ⚙️ **Flexible Configuration** - Support for global and workspace settings
+- ✅ **Auto Validation** - Automatically verifies if the target exists before sending
+- 🔔 **Friendly Feedback** - Detailed error messages and success notifications
 
-## 📦 安装要求
+## 📦 Requirements
 
-### Tmux 安装
+### Tmux Installation
 
-此扩展需要系统已安装 Tmux：
+This extension requires Tmux to be installed on your system:
 
 ```bash
 # macOS
@@ -38,130 +38,128 @@ sudo yum install tmux
 sudo pacman -S tmux
 ```
 
-验证安装：
+Verify installation:
 ```bash
 tmux -V
 ```
 
-## 🚀 快速开始
+## 🚀 Quick Start
 
-### 1. 基本使用流程
+### 1. Basic Workflow
 
-1. 在 VS Code 编辑器中选中要执行的代码或命令
-2. 按下快捷键 `Ctrl+Shift+T`（Windows/Linux）或 `Cmd+Shift+T`（macOS）
-3. 从快速选择菜单中选择目标 Tmux 会话/窗口/面板
-4. 选中的内容会自动发送到目标终端并执行
+1. Select the code or command you want to execute in the VS Code editor.
+2. Press `Ctrl+Shift+T` (Windows/Linux) or `Cmd+Shift+T` (macOS).
+3. Select the target Tmux session/window/pane from the quick pick menu.
+4. The selected content will be automatically sent to the target terminal and executed.
 
-### 2. 使用示例
+### 2. Usage Examples
 
-**Python REPL 开发：**
+**Python REPL Development:**
 ```python
-# 在 VS Code 中选中这段代码
+# Select this code in VS Code
 def hello(name):
     return f"Hello, {name}!"
 
-hello("World")  # 选中后发送到 Python REPL
+hello("World")  # Select and send to Python REPL
 ```
 
-**Shell 脚本执行：**
+**Shell Script Execution:**
 ```bash
-# 选中并发送到终端
+# Select and send to terminal
 ls -la
 cd ~/projects
 git status
 ```
 
-**Node.js 交互式开发：**
+**Node.js Interactive Development:**
 ```javascript
-// 发送到 Node REPL
+// Send to Node REPL
 const data = [1, 2, 3, 4, 5];
 data.map(x => x * 2);
 ```
 
-## 📋 命令列表
+## 📋 Command List
 
-扩展提供以下命令（可通过命令面板 `Ctrl+Shift+P` / `Cmd+Shift+P` 访问）：
+The extension provides the following commands (accessible via Command Palette `Ctrl+Shift+P` / `Cmd+Shift+P`):
 
 ### 1. SendTmux: Send Selection to Tmux
-- **命令 ID**: `sendtmux.sendSelection`
-- **默认快捷键**: `Ctrl+Shift+T` (Windows/Linux) / `Cmd+Shift+T` (macOS)
-- **功能**: 将选中的文本发送到 Tmux 目标
-- **行为**:
-  - 如果配置了默认目标，直接发送
-  - 如果有历史记录，使用上次的目标
-  - 否则弹出选择菜单
+- **Command ID**: `sendtmux.sendSelection`
+- **Default Shortcut**: `Ctrl+Shift+T` (Windows/Linux) / `Cmd+Shift+T` (macOS)
+- **Function**: Sends selected text to the Tmux target
+- **Behavior**:
+  - Sends directly if a default target is configured
+  - Uses the last target if history exists
+  - Otherwise, opens the selection menu
 
 ### 2. SendTmux: Send Selection with Confirmation
-- **命令 ID**: `sendtmux.sendWithConfirmation`
-- **功能**: 发送前始终确认目标
-- **行为**: 即使有默认配置，也会弹出目标选择菜单
+- **Command ID**: `sendtmux.sendWithConfirmation`
+- **Function**: Always confirms the target before sending
+- **Behavior**: Opens the target selection menu even if a default is configured
 
 ### 3. SendTmux: Select Tmux Target
-- **命令 ID**: `sendtmux.selectTarget`
-- **功能**: 选择或配置 Tmux 目标（不发送内容）
-- **行为**: 打开交互式目标选择界面，选择后保存到历史记录
+- **Command ID**: `sendtmux.selectTarget`
+- **Function**: Selects or configures a Tmux target (without sending)
+- **Behavior**: Opens the interactive target selection interface and saves the selection to history
 
-## ⚙️ 配置选项
+## ⚙️ Configuration Options
 
-在 VS Code 设置（`settings.json`）中可配置以下选项：
+Configure the following options in VS Code settings (`settings.json`):
 
-### 基础配置
+### Basic Configuration
 
 #### `sendtmux.session`
-- **类型**: `string`
-- **默认值**: `""`
-- **说明**: 默认的 Tmux 会话名称
+- **Type**: `string`
+- **Default**: `""`
+- **Description**: Default Tmux session name
 
 #### `sendtmux.window`
-- **类型**: `string`
-- **默认值**: `""`
-- **说明**: 默认的 Tmux 窗口编号或名称
+- **Type**: `string`
+- **Default**: `""`
+- **Description**: Default Tmux window index or name
 
 #### `sendtmux.pane`
-- **类型**: `string`
-- **默认值**: `""`
-- **说明**: 默认的 Tmux 面板编号
+- **Type**: `string`
+- **Default**: `""`
+- **Description**: Default Tmux pane index
 
-### 发送行为配置
+### Send Behavior Configuration
 
 #### `sendtmux.sendMode`
-- **类型**: `"all-at-once" | "line-by-line"`
-- **默认值**: `"all-at-once"`
-- **说明**: 多行文本的发送方式
-  - `all-at-once`: 一次性发送整个选中内容
-  - `line-by-line`: 逐行发送，每行单独执行
+- **Type**: `"all-at-once" | "line-by-line"`
+- **Default**: `"all-at-once"`
+- **Description**: How multi-line text is sent
+  - `all-at-once`: Sends the entire selection at once
+  - `line-by-line`: Sends line-by-line, executing each separately
 
 #### `sendtmux.appendNewline`
-- **类型**: `boolean`
-- **默认值**: `true`
-- **说明**: 是否在发送内容后自动追加换行符（回车）以执行命令
+- **Type**: `boolean`
+- **Default**: `true`
+- **Description**: Whether to automatically append a newline (Enter) after sending content to execute the command
 
 #### `sendtmux.confirmBeforeSend`
-- **类型**: `boolean`
-- **默认值**: `false`
-- **说明**: 每次发送前是否确认目标
+- **Type**: `boolean`
+- **Default**: `false`
+- **Description**: Whether to confirm the target before every send
 
 #### `sendtmux.rememberTarget`
-- **类型**: `boolean`
-- **默认值**: `true`
-- **说明**: 是否记住最近使用的目标（最多记住 10 个）
+- **Type**: `boolean`
+- **Default**: `true`
+- **Description**: Whether to remember recently used targets (up to 10)
 
-## 🎯 目标格式说明
+## 🎯 Target Format
 
-Tmux 目标可以使用以下格式：
+Tmux targets can use the following formats:
 
-| 格式 | 示例 | 说明 |
+| Format | Example | Description |
 |------|------|------|
-| `session` | `dev` | 发送到整个会话的当前面板 |
-| `session:window` | `dev:0` | 发送到指定会话的指定窗口 |
-| `session:window.pane` | `dev:0.1` | 发送到指定会话、窗口的指定面板 |
+| `session` | `dev` | Sends to the current pane of the entire session |
+| `session:window` | `dev:0` | Sends to a specific window of a specific session |
+| `session:window.pane` | `dev:0.1` | Sends to a specific pane of a specific window and session |
 
-## 📝 配置示例
+## 📝 Configuration Examples
 
-### 示例 1: 设置默认目标
-
-适合固定工作流，总是发送到同一个面板：
-
+### Example 1: Set Default Target
+Suitable for fixed workflows where you always send to the same pane:
 ```json
 {
   "sendtmux.session": "dev",
@@ -171,10 +169,8 @@ Tmux 目标可以使用以下格式：
 }
 ```
 
-### 示例 2: Python REPL 配置
-
-逐行发送，适合交互式编程：
-
+### Example 2: Python REPL Configuration
+Line-by-line sending, perfect for interactive programming:
 ```json
 {
   "sendtmux.session": "python-repl",
@@ -184,10 +180,8 @@ Tmux 目标可以使用以下格式：
 }
 ```
 
-### 示例 3: 安全模式配置
-
-每次发送前都确认，防止误操作：
-
+### Example 3: Safe Mode Configuration
+Always confirm before sending to prevent accidental operations:
 ```json
 {
   "sendtmux.confirmBeforeSend": true,
@@ -195,10 +189,8 @@ Tmux 目标可以使用以下格式：
 }
 ```
 
-### 示例 4: 工作区特定配置
-
-在 `.vscode/settings.json` 中为特定项目配置：
-
+### Example 4: Workspace Specific Configuration
+Configure for a specific project in `.vscode/settings.json`:
 ```json
 {
   "sendtmux.session": "my-project",
@@ -208,12 +200,11 @@ Tmux 目标可以使用以下格式：
 }
 ```
 
-## ⌨️ 自定义快捷键
+## ⌨️ Custom Keybindings
 
-在 `keybindings.json` 中自定义快捷键：
+Customize keybindings in `keybindings.json`:
 
-### 快捷键示例
-
+### Example Keybindings
 ```json
 [
   {
@@ -236,36 +227,33 @@ Tmux 目标可以使用以下格式：
 ]
 ```
 
-## 🎬 使用场景
+## 🎬 Use Cases
 
-### 场景 1: Python 数据分析
-
+### Case 1: Python Data Analysis
 ```python
-# 1. 启动 Tmux 和 IPython
+# 1. Start Tmux and IPython
 tmux new -s data-analysis
 ipython
 
-# 2. 在 VS Code 中编写和测试代码
+# 2. Write and test code in VS Code
 import pandas as pd
 import numpy as np
 
 df = pd.DataFrame({'a': [1, 2, 3], 'b': [4, 5, 6]})
-df.describe()  # 选中并发送
+df.describe()  # Select and send
 ```
 
-### 场景 2: Shell 脚本调试
-
+### Case 2: Shell Script Debugging
 ```bash
-# 逐步执行脚本的各个部分
+# Execute script parts step-by-step
 cd /var/log
-tail -f syslog  # 选中发送
-grep "error" syslog | head -10  # 选中发送
+tail -f syslog  # Select and send
+grep "error" syslog | head -10  # Select and send
 ```
 
-### 场景 3: Node.js 开发
-
+### Case 3: Node.js Development
 ```javascript
-// 发送到 Node REPL 进行快速测试
+// Send to Node REPL for quick testing
 const express = require('express');
 const app = express();
 
@@ -274,75 +262,62 @@ app.get('/', (req, res) => {
 });
 ```
 
-### 场景 4: 多服务开发
+### Case 4: Multi-service Development
+Run different services in different Tmux panes:
+- Pane 0: Database
+- Pane 1: Backend API
+- Pane 2: Frontend dev server
+- Pane 3: Log monitoring
 
-使用不同的 Tmux 面板运行不同的服务：
+Send commands to different panes via the extension.
 
-- 面板 0: 数据库
-- 面板 1: 后端 API
-- 面板 2: 前端开发服务器
-- 面板 3: 日志监控
+## 🔧 Advanced Features
 
-通过扩展向不同面板发送命令。
+### Interactive Target Selection
+When you execute the send command, the extension shows a smart selection menu:
+1. **Recent Targets** - Shows history for quick selection
+2. **Available Sessions** - Lists all running Tmux sessions
+3. **Custom Target** - Manually input a target string
+4. **Step-by-step Selection** - Select session first, then window, then pane
 
-## 🔧 高级功能
+### Target Validation
+Automatically validates before sending:
+- ✅ Is Tmux installed
+- ✅ Does the target session exist
+- ✅ Are the target window and pane valid
+- ❌ Shows error message if target is not found
 
-### 交互式目标选择
+### Error Handling
+- Tmux not installed: Shows installation guide
+- No text selected: Friendly reminder
+- Target not found: Shows target string and suggestions
+- Command execution failure: Shows detailed error information
 
-当你执行发送命令时，扩展会显示一个智能选择菜单：
+## 🐛 Known Issues
+None at the moment. Please submit an Issue on GitHub if you encounter any.
 
-1. **最近使用的目标** - 显示历史记录，快速选择
-2. **可用的 Tmux 会话** - 列出所有运行中的会话
-3. **自定义目标** - 手动输入目标字符串
-4. **逐级选择** - 先选会话，再选窗口，最后选面板
-
-### 目标验证
-
-发送前自动验证：
-- ✅ Tmux 是否已安装
-- ✅ 目标会话是否存在
-- ✅ 目标窗口和面板是否有效
-- ❌ 如果目标不存在，显示错误提示
-
-### 错误处理
-
-- 未安装 Tmux：显示安装指引
-- 未选中文本：友好提示
-- 目标不存在：显示目标字符串和建议
-- 命令执行失败：显示详细错误信息
-
-## 🐛 已知问题
-
-目前没有已知问题。如果遇到问题，请在 GitHub 仓库提交 Issue。
-
-## 📜 更新日志
+## 📜 Changelog
 
 ### 0.0.1 (Initial Release)
+Initial version released with:
+- ✅ Send selected text to Tmux pane
+- ✅ Smart target selection system
+- ✅ History (up to 10 entries)
+- ✅ Two send modes (all-at-once/line-by-line)
+- ✅ Complete error handling and validation
+- ✅ Rich configuration options
+- ✅ Custom keybindings support
+- ✅ Workspace configuration support
 
-初始版本发布，包含以下功能：
+## 🤝 Contributing
+Contributions, bug reports, and feature requests are welcome!
 
-- ✅ 发送选中文本到 Tmux 面板
-- ✅ 智能目标选择系统
-- ✅ 历史记录功能（最多 10 个）
-- ✅ 两种发送模式（整体/逐行）
-- ✅ 完整的错误处理和验证
-- ✅ 丰富的配置选项
-- ✅ 自定义快捷键支持
-- ✅ 工作区配置支持
-
-## 🤝 贡献
-
-欢迎贡献代码、报告问题或提出新功能建议！
-
-## 📄 许可证
-
+## 📄 License
 MIT License
 
-## 🙏 致谢
-
-感谢所有使用和支持这个项目的开发者！
+## 🙏 Acknowledgements
+Thanks to all developers for using and supporting this project!
 
 ---
 
-**享受高效的 Tmux 集成开发体验！** 🚀
-
+**Enjoy a highly efficient Tmux integrated development experience!** 🚀

@@ -57,10 +57,13 @@ export class TmuxService {
      */
     async listWindows(session: string): Promise<TmuxWindow[]> {
         try {
-            const { stdout } = await execAsync(
+            const { stdout, stderr } = await execAsync(
                 `tmux list-windows -t "${session}" -F "#{window_index}:#{window_name}"`
             );
-            return stdout
+            if (stderr) {
+                console.error(`tmux list-windows stderr for session "${session}":`, stderr);
+            }
+            const windows = stdout
                 .trim()
                 .split('\n')
                 .filter(line => line)
@@ -68,8 +71,14 @@ export class TmuxService {
                     const [index, name] = line.split(':', 2);
                     return { index, name: name || index };
                 });
+            if (windows.length === 0 && stdout.trim() === '') {
+                throw new Error(`No windows found in session "${session}"`);
+            }
+            return windows;
         } catch (error) {
-            return [];
+            const errorMessage = error instanceof Error ? error.message : String(error);
+            console.error(`Error listing windows for session "${session}":`, errorMessage);
+            throw new Error(`Failed to list windows for session "${session}": ${errorMessage}`);
         }
     }
 
