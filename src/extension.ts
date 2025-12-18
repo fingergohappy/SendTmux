@@ -13,7 +13,7 @@ export function activate(context: vscode.ExtensionContext) {
 
 	// Register commands
 	context.subscriptions.push(
-		vscode.commands.registerCommand('sendtmux.sendSelection', () => sendSelection(false))
+		vscode.commands.registerCommand('sendtmux.sendToTmux', () => sendSelection(false))
 	);
 
 	context.subscriptions.push(
@@ -59,15 +59,27 @@ async function sendSelection(forceConfirm: boolean): Promise<void> {
 		}
 
 		const selection = editor.selection;
-		if (selection.isEmpty) {
-			vscode.window.showErrorMessage('No text selected');
-			return;
-		}
+		let textToSend: string;
 
-		const selectedText = editor.document.getText(selection);
-		if (!selectedText) {
-			vscode.window.showErrorMessage('Selected text is empty');
-			return;
+		if (selection.isEmpty) {
+			// No selection, get current line
+			const line = editor.document.lineAt(selection.active.line);
+			const lineText = line.text.trim();
+
+			if (!lineText) {
+				vscode.window.showErrorMessage('Current line is empty');
+				return;
+			}
+
+			textToSend = line.text;
+		} else {
+			// Has selection
+			const selectedText = editor.document.getText(selection);
+			if (!selectedText) {
+				vscode.window.showErrorMessage('Selected text is empty');
+				return;
+			}
+			textToSend = selectedText;
 		}
 
 		// Get target
@@ -96,9 +108,9 @@ async function sendSelection(forceConfirm: boolean): Promise<void> {
 			},
 			async () => {
 				if (sendMode === 'line-by-line') {
-					await tmuxService.sendTextLineByLine(target, selectedText, appendNewline);
+					await tmuxService.sendTextLineByLine(target, textToSend, appendNewline);
 				} else {
-					await tmuxService.sendText(target, selectedText, appendNewline);
+					await tmuxService.sendText(target, textToSend, appendNewline);
 				}
 			}
 		);

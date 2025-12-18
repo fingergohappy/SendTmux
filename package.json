@@ -1,8 +1,8 @@
 {
   "name": "sendtmux",
   "displayName": "SendTmux",
-  "description": "Send selected text from VS Code to Tmux panes",
-  "version": "0.0.1",
+  "description": "Send selected text or current line from VS Code to Tmux panes",
+  "version": "0.0.2",
   "icon": "log.png",
   "publisher": "finger",
   "repository": {
@@ -20,8 +20,8 @@
   "contributes": {
     "commands": [
       {
-        "command": "sendtmux.sendSelection",
-        "title": "SendTmux: Send Selection to Tmux"
+        "command": "sendtmux.sendToTmux",
+        "title": "SendTmux: Send to Tmux"
       },
       {
         "command": "sendtmux.selectTarget",
@@ -29,15 +29,15 @@
       },
       {
         "command": "sendtmux.sendWithConfirmation",
-        "title": "SendTmux: Send Selection with Confirmation"
+        "title": "SendTmux: Send to Tmux with Confirmation"
       }
     ],
     "keybindings": [
       {
-        "command": "sendtmux.sendSelection",
+        "command": "sendtmux.sendToTmux",
         "key": "ctrl+shift+t",
         "mac": "cmd+shift+t",
-        "when": "editorTextFocus && editorHasSelection"
+        "when": "editorTextFocus"
       }
     ],
     "configuration": {
