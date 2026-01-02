@@ -296,6 +296,18 @@ None at the moment. Please submit an Issue on GitHub if you encounter any.
 
 ## 📜 Changelog
 
+### 0.0.5 (2026-01-02)
+- ✅ Remove deprecated `sendtmux.appendNewline` configuration option
+- ✅ Enhance `sendtmux.finalKey` to support comma-separated key values (e.g., "Enter,Space")
+- ✅ Update tmuxService to send multiple keys sequentially when comma-separated values are specified
+- ✅ Improve configurationManager to handle backward compatibility with existing `appendNewline` settings
+- ✅ Update documentation with new configuration examples and remove deprecated references
+
+### 0.0.4 (2025-12-18)
+- ✅ Add "Show Output" command to display tmux command execution logs
+- ✅ Improve error handling and logging in tmuxService
+- ✅ Add output channel for debugging and monitoring
+
 ### 0.0.1 (Initial Release)
 Initial version released with:
 - ✅ Send selected text to Tmux pane
