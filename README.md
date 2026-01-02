@@ -131,10 +131,10 @@ Configure the following options in VS Code settings (`settings.json`):
   - `all-at-once`: Sends the entire selection at once
   - `line-by-line`: Sends line-by-line, executing each separately
 
-#### `sendtmux.appendNewline`
-- **Type**: `boolean`
-- **Default**: `true`
-- **Description**: Whether to automatically append a newline (Enter) after sending content to execute the command
+#### `sendtmux.finalKey`
+- **Type**: `string`
+- **Default**: `"Enter"`
+- **Description**: Key(s) to send after content is sent (e.g., "Enter", "Space", "" for none). Multiple keys can be comma-separated (e.g., "Enter,Space"). Common keys: Enter, Space, Tab, Escape, etc.
 
 #### `sendtmux.confirmBeforeSend`
 - **Type**: `boolean`
@@ -164,8 +164,7 @@ Suitable for fixed workflows where you always send to the same pane:
 {
   "sendtmux.session": "dev",
   "sendtmux.window": "0",
-  "sendtmux.pane": "1",
-  "sendtmux.appendNewline": true
+  "sendtmux.pane": "1"
 }
 ```
 
@@ -175,7 +174,6 @@ Line-by-line sending, perfect for interactive programming:
 {
   "sendtmux.session": "python-repl",
   "sendtmux.sendMode": "line-by-line",
-  "sendtmux.appendNewline": true,
   "sendtmux.rememberTarget": true
 }
 ```

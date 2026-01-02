@@ -161,32 +161,79 @@ export class TmuxService {
 
     /**
      * Send text to tmux target
+     * For multi-line text, send line by line to preserve indentation
+     * @param finalKey Key(s) to send after all content is sent (e.g., "Enter", "Space", "" for none).
+     *                Multiple keys can be comma-separated (e.g., "Enter,Space")
      */
-    async sendText(target: TmuxTarget, text: string, appendNewline: boolean = true): Promise<void> {
+    async sendText(target: TmuxTarget, text: string, finalKey: string = 'Enter'): Promise<void> {
         const targetStr = this.buildTargetString(target);
         this.log(`Sending text to ${targetStr}`);
         const sanitizedTarget = this.escapeShellArg(targetStr);
 
-        // Escape single quotes in the text
-        const escapedText = text.replace(/'/g, "'\\''");
-
-        // Send the text
-        await execAsync(`tmux send-keys -t ${sanitizedTarget} -l '${escapedText}'`);
-
-        // Send Enter key if appendNewline is true
-        if (appendNewline) {
-            await execAsync(`tmux send-keys -t ${sanitizedTarget} Enter`);
+        // If text contains newlines, send line by line to preserve indentation
+        if (text.includes('\n')) {
+            const lines = text.split('\n');
+            for (let i = 0; i < lines.length; i++) {
+                const line = lines[i];
+                
+                // Escape single quotes in the line (preserve all whitespace including leading spaces)
+                const escapedLine = line.replace(/'/g, "'\\''");
+                
+                // Send the line (preserving indentation)
+                await execAsync(`tmux send-keys -t ${sanitizedTarget} -l '${escapedLine}'`);
+                
+                // Send newline for all lines except the last one
+                if (i < lines.length - 1) {
+                    await execAsync(`tmux send-keys -t ${sanitizedTarget} Enter`);
+                }
+            }
+        } else {
+            // Single line text: send as before
+            const escapedText = text.replace(/'/g, "'\\''");
+            await execAsync(`tmux send-keys -t ${sanitizedTarget} -l '${escapedText}'`);
+        }
+        
+        // Send final key after all content is sent
+        if (finalKey) {
+            // Split comma-separated keys, trim whitespace, and filter empty strings
+            const keys = finalKey.split(',').map(k => k.trim()).filter(k => k !== '');
+            for (const key of keys) {
+                await execAsync(`tmux send-keys -t ${sanitizedTarget} ${key}`);
+            }
         }
     }
 
     /**
-     * Send text line by line
+     * Send text line by line, preserving indentation
+     * @param finalKey Key(s) to send after all content is sent (e.g., "Enter", "Space", "" for none).
+     *                Multiple keys can be comma-separated (e.g., "Enter,Space")
      */
-    async sendTextLineByLine(target: TmuxTarget, text: string, appendNewline: boolean = true): Promise<void> {
+    async sendTextLineByLine(target: TmuxTarget, text: string, finalKey: string = 'Enter'): Promise<void> {
+        const targetStr = this.buildTargetString(target);
+        const sanitizedTarget = this.escapeShellArg(targetStr);
         const lines = text.split('\n');
-        for (const line of lines) {
-            if (line.trim()) {
-                await this.sendText(target, line, appendNewline);
+        
+        for (let i = 0; i < lines.length; i++) {
+            const line = lines[i];
+            
+            // Escape single quotes in the line (preserve all whitespace including leading spaces)
+            const escapedLine = line.replace(/'/g, "'\\''");
+            
+            // Send the line (preserving indentation)
+            await execAsync(`tmux send-keys -t ${sanitizedTarget} -l '${escapedLine}'`);
+            
+            // Send newline for all lines except the last one
+            if (i < lines.length - 1) {
+                await execAsync(`tmux send-keys -t ${sanitizedTarget} Enter`);
+            }
+        }
+        
+        // Send final key after all content is sent
+        if (finalKey) {
+            // Split comma-separated keys, trim whitespace, and filter empty strings
+            const keys = finalKey.split(',').map(k => k.trim()).filter(k => k !== '');
+            for (const key of keys) {
+                await execAsync(`tmux send-keys -t ${sanitizedTarget} ${key}`);
             }
         }
     }

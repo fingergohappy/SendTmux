@@ -62,7 +62,7 @@ export async function sendSelection(
         }
 
         const sendMode = configManager.getSendMode();
-        const appendNewline = configManager.getAppendNewline();
+        const finalKey: string = configManager.getFinalKey();
 
         await vscode.window.withProgress(
             {
@@ -71,10 +71,11 @@ export async function sendSelection(
                 cancellable: false,
             },
             async () => {
+                const keyToSend: string = finalKey;
                 if (sendMode === 'line-by-line') {
-                    await tmuxService.sendTextLineByLine(target, textToSend, appendNewline);
+                    await tmuxService.sendTextLineByLine(target, textToSend, keyToSend);
                 } else {
-                    await tmuxService.sendText(target, textToSend, appendNewline);
+                    await tmuxService.sendText(target, textToSend, keyToSend);
                 }
             }
         );

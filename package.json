@@ -2,7 +2,7 @@
   "name": "sendtmux",
   "displayName": "SendTmux",
   "description": "Send selected text or current line from VS Code to Tmux panes",
-  "version": "0.0.4",
+  "version": "0.0.5",
   "icon": "log.png",
   "publisher": "finger",
   "repository": {
@@ -85,10 +85,10 @@
           "default": true,
           "description": "Remember recently used targets"
         },
-        "sendtmux.appendNewline": {
-          "type": "boolean",
-          "default": true,
-          "description": "Append newline to execute commands automatically"
+        "sendtmux.finalKey": {
+          "type": "string",
+          "default": "Enter",
+          "description": "Key(s) to send after content is sent (e.g., 'Enter', 'Space', '' for none). Multiple keys can be specified comma-separated (e.g., 'Enter,Space'). Common keys: Enter, Space, Tab, Escape, etc."
         }
       }
     }

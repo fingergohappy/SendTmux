@@ -52,11 +52,26 @@ export class ConfigurationManager {
         return this.getConfig<boolean>('rememberTarget') !== false;
     }
 
+
     /**
-     * Get append newline configuration
+     * Get final key to send after content
+     * Returns the key name(s) (e.g., "Enter", "Space", etc.) or empty string if none
+     * Multiple keys can be comma-separated (e.g., "Enter,Space")
      */
-    getAppendNewline(): boolean {
-        return this.getConfig<boolean>('appendNewline') !== false;
+    getFinalKey(): string {
+        const finalKey = this.getConfig<string>('finalKey');
+        if (typeof finalKey === 'string' && finalKey !== '') {
+            return finalKey;
+        }
+        // Backward compatibility: check appendNewline setting (deprecated)
+        const appendNewline = this.getConfig<boolean>('appendNewline');
+        if (appendNewline !== undefined) {
+            // If appendNewline is explicitly set to false, return empty string
+            // If true or undefined, default to "Enter"
+            return appendNewline ? 'Enter' : '';
+        }
+        // No explicit configuration, default to "Enter"
+        return 'Enter';
     }
 
     /**
